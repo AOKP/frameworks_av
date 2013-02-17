@@ -602,6 +602,14 @@ audio_io_handle_t AudioSystem::getOutput(audio_stream_type_t stream,
     return aps->getOutput(stream, samplingRate, format, channelMask, flags);
 }
 
+extern "C" audio_io_handle_t _ZN7android11AudioSystem9getOutputE19audio_stream_type_tjjj27audio_policy_output_flags_t(audio_stream_type_t stream,
+                                    uint32_t samplingRate,
+                                    uint32_t format,
+                                    uint32_t channels,
+                                    audio_output_flags_t flags) {
+    return AudioSystem::getOutput(stream,samplingRate,(audio_format_t) format, channels, flags);
+}
+
 status_t AudioSystem::startOutput(audio_io_handle_t output,
                                   audio_stream_type_t stream,
                                   int session)
@@ -785,6 +793,15 @@ extern "C" bool _ZN7android11AudioSystem17isSeparatedStreamE19audio_stream_type_
    ALOGD("audio_stream_type_t: %d", stream);
    ALOGD("isSeparatedStream: false");
    return false;
+}
+#endif // USE_SAMSUNG_SEPARATEDSTREAM
+
+#ifdef USE_SAMSUNG_SEPARATEDSTREAM
+extern "C" bool _ZN7android11AudioSystem17isSeparatedStreamE19audio_stream_type_t(audio_stream_type_t stream)
+{
+    ALOGD("audio_stream_type_t: %d", stream);
+    ALOGD("isSeparatedStream: false");
+    return false;
 }
 #endif // USE_SAMSUNG_SEPARATEDSTREAM
 
