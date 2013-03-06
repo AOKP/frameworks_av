@@ -57,17 +57,11 @@ const char CameraParameters::CAPTURE_MODE_HJR[] = "hjr";
 const char CameraParameters::CAPTURE_MODE_PANORAMA[] = "panorama";
 const char CameraParameters::CONTINUOUS_AF_OFF[] = "caf-off";
 const char CameraParameters::CONTINUOUS_AF_ON[] = "caf-on";
-const char CameraParameters::KEY_CONTINUOUS_AF[] = "continuous-af";
-const char CameraParameters::KEY_CAPTURE_MODE[] = "capture-mode";
-const char CameraParameters::KEY_PICTURE_COUNT[] = "picture-count";
-const char CameraParameters::KEY_MAX_BURST_PICTURE_COUNT[] = "max-burst-picture-count";
-const char CameraParameters::KEY_SUPPORTED_CONTINUOUS_AF[] = "continuous-af-mode";
 const char CameraParameters::KEY_SUPPORTED_CAPTURE_MODES[] = "capture-mode-values";
 const char CameraParameters::KEY_TAKING_PICTURE_ZOOM[] = "taking-picture-zoom";
 const char CameraParameters::KEY_PANORAMA_MODE[] = "panorama-mode";
 const char CameraParameters::PANORAMA_MODE_NOT_INPROGRESS[] = "not-in-progress";
 const char CameraParameters::PANORAMA_MODE_INPROGRESS[] = "in-progress";
-
 #endif
 const char CameraParameters::KEY_PICTURE_SIZE[] = "picture-size";
 const char CameraParameters::KEY_SUPPORTED_PICTURE_SIZES[] = "picture-size-values";
@@ -662,11 +656,6 @@ void CameraParameters::getSupportedPreviewSizes(Vector<Size> &sizes) const
 }
 
 #ifdef QCOM_HARDWARE
-void CameraParameters::setPostviewSize(int width, int height)
-{
-    // dummy
-}
-
 void CameraParameters::getSupportedHfrSizes(Vector<Size> &sizes) const
 {
     const char *hfrSizesStr = get(KEY_SUPPORTED_HFR_SIZES);
@@ -678,6 +667,11 @@ void CameraParameters::setPreviewFpsRange(int minFPS, int maxFPS)
     char str[32];
     snprintf(str, sizeof(str), "%d,%d",minFPS,maxFPS);
     set(KEY_PREVIEW_FPS_RANGE,str);
+}
+
+void CameraParameters::setPostviewSize(int width, int height)
+{
+    //dummy
 }
 #endif
 
@@ -874,3 +868,4 @@ status_t CameraParameters::dump(int fd, const Vector<String16>& args) const
 }
 
 }; // namespace android
+
