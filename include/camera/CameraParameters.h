@@ -848,16 +848,11 @@ public:
     static const char FOCUS_MODE_CONTINUOUS_PICTURE[];
 
 #ifdef QCOM_HARDWARE
-    static const char FOCUS_MODE_CONTINUOUS_CAMERA[];
 
     // Values for Continuous AF
     static const char CAF_OFF[] ;
     static const char CAF_ON[] ;
-    // Proprietaries from CodeAurora use these...
-    static const char CONTINUOUS_AF_OFF[] ;
-    static const char CONTINUOUS_AF_ON[] ;
-    static const char KEY_CONTINUOUS_AF[] ;
-
+    
     // Normal focus mode. Applications should call
     // CameraHardwareInterface.autoFocus to start the focus in this mode.
     static const char FOCUS_MODE_NORMAL[];
