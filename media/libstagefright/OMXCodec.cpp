@@ -4539,54 +4539,16 @@ status_t OMXCodec::read(
               onCmdComplete(OMX_CommandFlush, kPortIndexBoth);
           }
         } else {
-<<<<<<< HEAD
-
-        //DSP supports flushing of ports simultaneously.
-        //Flushing individual port is not supported.
-        if(mQuirks & kRequiresGlobalFlush) {
-            bool emulateFlushCompletion = !flushPortAsync(kPortIndexBoth);
-            if (emulateFlushCompletion) {
-                onCmdComplete(OMX_CommandFlush, kPortIndexBoth);
-            }
-        } else {
 #endif
             bool emulateInputFlushCompletion = !flushPortAsync(kPortIndexInput);
             bool emulateOutputFlushCompletion = !flushPortAsync(kPortIndexOutput);
 
             if (emulateInputFlushCompletion) {
                 onCmdComplete(OMX_CommandFlush, kPortIndexInput);
-            }
-
-=======
-
-        //DSP supports flushing of ports simultaneously.
-        //Flushing individual port is not supported.
-        if(mQuirks & kRequiresGlobalFlush) {
-            bool emulateFlushCompletion = !flushPortAsync(kPortIndexBoth);
-            if (emulateFlushCompletion) {
-                onCmdComplete(OMX_CommandFlush, kPortIndexBoth);
-            }
-        } else {
-#endif
-            bool emulateInputFlushCompletion = !flushPortAsync(kPortIndexInput);
-            bool emulateOutputFlushCompletion = !flushPortAsync(kPortIndexOutput);
-
-            if (emulateInputFlushCompletion) {
-                onCmdComplete(OMX_CommandFlush, kPortIndexInput);
-            }
-
->>>>>>> ev/jellybean
-            if (emulateOutputFlushCompletion) {
-                onCmdComplete(OMX_CommandFlush, kPortIndexOutput);
             }
 #ifdef QCOM_HARDWARE
-<<<<<<< HEAD
         }
         }
-=======
-        }
-        }
->>>>>>> ev/jellybean
 #endif
 
         while (mSeekTimeUs >= 0) {
