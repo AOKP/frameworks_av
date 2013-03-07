@@ -25,10 +25,6 @@
 #include "include/AACEncoder.h"
 #include "include/MP3Decoder.h"
 
-#ifdef OLD_AVC_ENCODER
-#include "include/AVCEncoder.h"
-#endif
-
 #include "include/ESDS.h"
 
 #include <binder/IServiceManager.h>
@@ -116,9 +112,6 @@ static sp<MediaSource> Make##name(const sp<MediaSource> &source, const sp<MetaDa
 
 FACTORY_CREATE(MP3Decoder)
 FACTORY_CREATE_ENCODER(AACEncoder)
-#ifdef OLD_AVC_ENCODER
-FACTORY_CREATE_ENCODER(AVCEncoder)
-#endif
 
 static sp<MediaSource> InstantiateSoftwareEncoder(
         const char *name, const sp<MediaSource> &source,
@@ -130,9 +123,6 @@ static sp<MediaSource> InstantiateSoftwareEncoder(
 
     static const FactoryInfo kFactoryInfo[] = {
         FACTORY_REF(AACEncoder)
-#ifdef OLD_AVC_ENCODER
-        FACTORY_REF(AVCEncoder)
-#endif
     };
     for (size_t i = 0;
          i < sizeof(kFactoryInfo) / sizeof(kFactoryInfo[0]); ++i) {
@@ -316,32 +306,6 @@ void OMXCodec::findMatchingCodecs(
 uint32_t OMXCodec::getComponentQuirks(
         const MediaCodecList *list, size_t index) {
     uint32_t quirks = 0;
-
-    if (list->codecHasQuirk(
-                index, "needs-flush-before-disable")) {
-        quirks |= kNeedsFlushBeforeDisable;
-    }
-    if (list->codecHasQuirk(
-                index, "requires-flush-complete-emulation")) {
-        quirks |= kRequiresFlushCompleteEmulation;
-    }
-    if (list->codecHasQuirk(
-                index, "supports-multiple-frames-per-input-buffer")) {
-        quirks |= kSupportsMultipleFramesPerInputBuffer;
-    }
-    if (list->codecHasQuirk(
-                index, "input-buffer-sizes-are-bogus")) {
-        quirks |= kInputBufferSizesAreBogus;
-    }
-    if (list->codecHasQuirk(
-                index, "avoid-memcopy-input-recording-frames")) {
-        quirks |= kAvoidMemcopyInputRecordingFrames;
-    }
-    if (list->codecHasQuirk(
-                index, "requires-larger-encoder-output-buffer")) {
-        quirks |= kRequiresLargerEncoderOutputBuffer;
-    }
-
     if (list->codecHasQuirk(
                 index, "requires-allocate-on-input-ports")) {
         quirks |= kRequiresAllocateBufferOnInputPorts;
@@ -4539,12 +4503,25 @@ status_t OMXCodec::read(
               onCmdComplete(OMX_CommandFlush, kPortIndexBoth);
           }
         } else {
+
+        //DSP supports flushing of ports simultaneously.
+        //Flushing individual port is not supported.
+        if(mQuirks & kRequiresGlobalFlush) {
+            bool emulateFlushCompletion = !flushPortAsync(kPortIndexBoth);
+            if (emulateFlushCompletion) {
+                onCmdComplete(OMX_CommandFlush, kPortIndexBoth);
+            }
+        } else {
 #endif
             bool emulateInputFlushCompletion = !flushPortAsync(kPortIndexInput);
             bool emulateOutputFlushCompletion = !flushPortAsync(kPortIndexOutput);
 
             if (emulateInputFlushCompletion) {
                 onCmdComplete(OMX_CommandFlush, kPortIndexInput);
+            }
+
+            if (emulateOutputFlushCompletion) {
+                onCmdComplete(OMX_CommandFlush, kPortIndexOutput);
             }
 #ifdef QCOM_HARDWARE
         }
@@ -5353,7 +5330,7 @@ status_t QueryCodec(
     // Color format query
     OMX_VIDEO_PARAM_PORTFORMATTYPE portFormat;
     InitOMXParams(&portFormat);
-    portFormat.nPortIndex = !isEncoder ? 0 : 1;
+    portFormat.nPortIndex = !isEncoder ? 1 : 0;
     for (portFormat.nIndex = 0;; ++portFormat.nIndex)  {
         err = omx->getParameter(
                 node, OMX_IndexParamVideoPortFormat,
