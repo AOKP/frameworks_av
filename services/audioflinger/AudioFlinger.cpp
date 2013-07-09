@@ -1906,6 +1906,7 @@ audio_io_handle_t AudioFlinger::openOutput(audio_module_handle_t module,
         }
         if (thread != NULL) {
             mPlaybackThreads.add(id, thread);
+            thread->mOutputFlags = flags;
         }
 
         if (pSamplingRate != NULL) {
@@ -2281,7 +2282,11 @@ status_t AudioFlinger::setStreamOutput(audio_stream_type_t stream, audio_io_hand
 
     for (size_t i = 0; i < mPlaybackThreads.size(); i++) {
         PlaybackThread *thread = mPlaybackThreads.valueAt(i).get();
-        thread->invalidateTracks(stream);
+#ifdef QCOM_HARDWARE
+        // Do not invalidate voip stream which uses directoutput thread
+        if(!(thread->type() == ThreadBase::DIRECT && (thread->mOutputFlags & AUDIO_OUTPUT_FLAG_VOIP_RX)))
+#endif
+            thread->invalidateTracks(stream);
     }
 
     return NO_ERROR;
