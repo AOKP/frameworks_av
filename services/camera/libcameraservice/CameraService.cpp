@@ -765,8 +765,8 @@ void CameraService::loadSound() {
     if (mSoundRef++) return;
 
     char value[PROPERTY_VALUE_MAX];
-    property_get("persist.camera.shutter.disable", value, "0");
-    int disableSound = atoi(value);
+    property_get("persist.sys.camera-sound", value, "1");
+    int disableSound = atoi(value) == 0;
 
     if(!disableSound) {
         mSoundPlayer[SOUND_SHUTTER] = newMediaPlayer("/system/media/audio/ui/camera_click.ogg");
