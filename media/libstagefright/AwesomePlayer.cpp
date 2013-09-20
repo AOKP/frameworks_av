@@ -1033,7 +1033,7 @@ status_t AwesomePlayer::play_l() {
 #ifdef QCOM_ENHANCED_AUDIO
 #ifdef USE_TUNNEL_MODE
                 // Create tunnel player if tunnel mode is enabled
-                ALOGW("Trying to create tunnel player mIsTunnelAudio %d, \
+                ALOGV("Trying to create tunnel player mIsTunnelAudio %d, \
                         LPAPlayer::mObjectsAlive %d, \
                         TunnelPlayer::mTunnelObjectsAlive = %d,\
                         (mAudioPlayer == NULL) %d",
@@ -1078,7 +1078,7 @@ status_t AwesomePlayer::play_l() {
                 uint32_t minDurationForLPA = LPA_MIN_DURATION_USEC_DEFAULT;
                 char minUserDefDuration[PROPERTY_VALUE_MAX];
                 property_get("lpa.decode",lpaDecode,"0");
-                property_get("lpa.min_duration",minUserDefDuration,"LPA_MIN_DURATION_USEC_DEFAULT");
+                property_get("lpa.min_duration",minUserDefDuration,"60000000");
                 minDurationForLPA = atoi(minUserDefDuration);
                 if(minDurationForLPA < LPA_MIN_DURATION_USEC_ALLOWED) {
                     if(mAudioPlayer == NULL) {
@@ -1705,7 +1705,7 @@ status_t AwesomePlayer::initAudioDecoder() {
         uint32_t minDurationForLPA = LPA_MIN_DURATION_USEC_DEFAULT;
         char minUserDefDuration[PROPERTY_VALUE_MAX];
         property_get("lpa.decode",lpaDecode,"0");
-        property_get("lpa.min_duration",minUserDefDuration,"LPA_MIN_DURATION_USEC_DEFAULT");
+        property_get("lpa.min_duration",minUserDefDuration,"60000000");
         minDurationForLPA = atoi(minUserDefDuration);
         if(minDurationForLPA < LPA_MIN_DURATION_USEC_ALLOWED) {
             ALOGE("LPAPlayer::Clip duration setting of less than 30sec not supported, defaulting to 60sec");
