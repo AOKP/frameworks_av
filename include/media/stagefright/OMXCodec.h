@@ -367,6 +367,8 @@ private:
 
     OMXCodec(const OMXCodec &);
     OMXCodec &operator=(const OMXCodec &);
+
+    int32_t mNumBFrames;
 };
 
 struct CodecCapabilities {
