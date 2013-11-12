@@ -42,6 +42,10 @@
 #include <sec_format.h>
 #endif
 
+#ifdef USE_TI_CUSTOM_DOMX
+#include <OMX_TI_IVCommon.h>
+#endif
+
 #include <media/stagefright/ExtendedCodec.h>
 #include "include/avc_utils.h"
 #include "include/ExtendedUtils.h"
