@@ -1722,7 +1722,7 @@ void OMXCodec::setComponentRole(
             "audio_decoder.flac", "audio_encoder.flac" },
         { MEDIA_MIMETYPE_AUDIO_MSGSM,
             "audio_decoder.gsm", "audio_encoder.gsm" },
-#ifdef ENABLE_QC_AV_ENHANCEMENTS
+#ifdef ENABLE_AV_ENHANCEMENTS
         { MEDIA_MIMETYPE_VIDEO_DIVX,
             "video_decoder.divx", NULL },
         { MEDIA_MIMETYPE_AUDIO_AC3,

@@ -67,8 +67,8 @@ LOCAL_SRC_FILES:=                         \
         TunnelPlayer.cpp                  \
         Utils.cpp                         \
         VBRISeeker.cpp                    \
-        WAVExtractor.cpp
-        WAVEWriter.cpp                  \
+        WAVExtractor.cpp                  \
+        WAVEWriter.cpp                    \
         WVMExtractor.cpp                  \
         XINGSeeker.cpp                    \
         avc_utils.cpp                     \
@@ -133,7 +133,13 @@ LOCAL_STATIC_LIBRARIES := \
 
 ifeq ($(TARGET_ENABLE_QC_AV_ENHANCEMENTS),true)
        LOCAL_CFLAGS     += -DENABLE_AV_ENHANCEMENTS
-       LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/media/mm-core/inc
+       ifneq ($(TARGET_QCOM_MEDIA_VARIANT),)
+           LOCAL_C_INCLUDES += \
+               $(TOP)/hardware/qcom/media-$(TARGET_QCOM_MEDIA_VARIANT)/mm-core/inc
+       else
+           LOCAL_C_INCLUDES += \
+               $(TOP)/hardware/qcom/media/mm-core/inc
+       endif
        LOCAL_SRC_FILES  += ExtendedMediaDefs.cpp
        LOCAL_SRC_FILES  += ExtendedWriter.cpp
 endif #TARGET_ENABLE_AV_ENHANCEMENTS
