@@ -28,7 +28,9 @@
 #include <utils/threads.h>
 
 #include <libexpat/expat.h>
+#ifdef QCOM_HARDWARE
 #include "include/ExtendedUtils.h"
+#endif
 
 namespace android {
 
@@ -63,7 +65,6 @@ MediaCodecList::MediaCodecList()
         // These are currently still used by the video editing suite.
 
         addMediaCodec(true /* encoder */, "AACEncoder", "audio/mp4a-latm");
-
 
         addMediaCodec(
                      false /* encoder */, "OMX.google.raw.decoder", "audio/raw");
