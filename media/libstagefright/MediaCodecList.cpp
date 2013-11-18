@@ -17,7 +17,6 @@
 //#define LOG_NDEBUG 0
 #define LOG_TAG "MediaCodecList"
 #include <utils/Log.h>
-#include <cutils/properties.h>
 
 #include <media/stagefright/MediaCodecList.h>
 
@@ -70,15 +69,11 @@ MediaCodecList::MediaCodecList()
                      false /* encoder */, "OMX.google.raw.decoder", "audio/raw");
 
 #ifdef QCOM_HARDWARE
-        char value[PROPERTY_MAX_VALUE] = {0};
-        int aaccodectype = property_get("media.aaccodectype", value, NULL);
-        if (aaccodectype && !strncmp("0", value, 1)) {
-            Vector<AString> QcomAACQuirks;
-            QcomAACQuirks.push(AString("requires-allocate-on-input-ports"));
-            QcomAACQuirks.push(AString("requires-allocate-on-output-ports"));
-            QCUtils::helper_addMediaCodec(mCodecInfos, mTypes, false, "OMX.qcom.audio.decoder.multiaac",
-                "audio/mp4a-latm", QCUtils::helper_getCodecSpecificQuirks(mCodecQuirks, QcomAACQuirks));
-        }
+        Vector<AString> QcomAACQuirks;
+        QcomAACQuirks.push(AString("requires-allocate-on-input-ports"));
+        QcomAACQuirks.push(AString("requires-allocate-on-output-ports"));
+        ExtendedUtils::helper_addMediaCodec(mCodecInfos, mTypes, false, "OMX.qcom.audio.decoder.multiaac",
+            "audio/mp4a-latm", ExtendedUtils::helper_getCodecSpecificQuirks(mCodecQuirks, QcomAACQuirks));
 #endif
     }
 
