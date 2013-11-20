@@ -63,8 +63,6 @@
 #include <QOMX_AudioExtensions.h>
 #endif
 
-#include "include/ExtendedUtils.h"
-
 #ifdef USE_TI_CUSTOM_DOMX
 #include <OMX_TI_Video.h>
 #include <OMX_TI_Index.h>
