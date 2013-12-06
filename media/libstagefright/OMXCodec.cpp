@@ -532,12 +532,7 @@ sp<MediaSource> OMXCodec::Create(
             observer->setCodec(codec);
 
             err = codec->configureCodec(meta);
-
             if (err == OK) {
-                if (!strcmp("OMX.Nvidia.mpeg2v.decode", componentName)) {
-                    codec->mFlags |= kOnlySubmitOneInputBufferAtOneTime;
-                }
-
                 return codec;
             }
 
