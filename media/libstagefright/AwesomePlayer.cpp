@@ -2380,6 +2380,10 @@ void AwesomePlayer::onVideoEvent() {
         modifyFlags(SEEK_PREVIEW, CLEAR);
         return;
     }
+    int64_t eventDurationUs = mSystemTimeSource.getRealTimeUs() - eventStartTimeUs;
+    int64_t delayUs = mFrameDurationUs - eventDurationUs - latenessUs - earlyGapUs;
+    delayUs = delayUs > kDefaultEventDelayUs ? kDefaultEventDelayUs : delayUs;
+    postVideoEvent_l(delayUs > 0 ? delayUs : 0);
 
     /* get next frame time */
     if (wasSeeking == NO_SEEK) {
