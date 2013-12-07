@@ -160,6 +160,7 @@ void DataSource::RegisterDefaultSniffers() {
     if (gSniffersRegistered) {
         return;
     }
+
     RegisterSniffer_l(SniffMPEG4);
     RegisterSniffer_l(SniffMatroska);
     RegisterSniffer_l(SniffOgg);
