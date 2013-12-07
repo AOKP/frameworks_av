@@ -48,7 +48,6 @@
 #include <OMX_TI_IVCommon.h>
 #endif
 
-#include <media/stagefright/ExtendedCodec.h>
 #include "include/avc_utils.h"
 #ifdef QCOM_HARDWARE
 #include "include/ExtendedUtils.h"
