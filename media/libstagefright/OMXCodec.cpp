@@ -53,14 +53,14 @@
 #endif
 #include "include/avc_utils.h"
 
-#ifdef USE_SAMSUNG_COLORFORMAT
-#include <sec_format.h>
-#endif
-
 #ifdef ENABLE_AV_ENHANCEMENTS
 #include <QCMediaDefs.h>
 #include <QCMetaData.h>
 #include <QOMX_AudioExtensions.h>
+#endif
+
+#ifdef USE_SAMSUNG_COLORFORMAT
+#include <sec_format.h>
 #endif
 
 #ifdef USE_TI_CUSTOM_DOMX
@@ -106,6 +106,7 @@ const static uint32_t kMaxColorFormatSupported = 1000;
 static sp<MediaSource> Make##name(const sp<MediaSource> &source) { \
     return new name(source); \
 }
+
 #define FACTORY_CREATE_ENCODER(name) \
 static sp<MediaSource> Make##name(const sp<MediaSource> &source, const sp<MetaData> &meta) { \
     return new name(source, meta); \
@@ -270,6 +271,7 @@ void OMXCodec::findMatchingCodecs(
     }
 
     size_t index = 0;
+
 #ifdef ENABLE_AV_ENHANCEMENTS
     if (matchComponentName && !strcmp("OMX.qcom.audio.encoder.aac", matchComponentName)) {
         matchingCodecs->add();
@@ -687,7 +689,8 @@ status_t OMXCodec::configureCodec(const sp<MetaData> &meta) {
             }
 #endif
         }
-      }
+    }
+
     int32_t bitRate = 0;
     if (mIsEncoder) {
         CHECK(meta->findInt32(kKeyBitRate, &bitRate));
@@ -1712,8 +1715,7 @@ OMXCodec::OMXCodec(
       mLeftOverBuffer(NULL),
       mPaused(false),
       mNativeWindow(
-              (!strncmp(componentName, "OMX.google.", 11)
-              || !strcmp(componentName, "OMX.Nvidia.mpeg2v.decode"))
+              (!strncmp(componentName, "OMX.google.", 11))
 #ifdef QCOM_HARDWARE
                         ? NULL : nativeWindow),
       mNumBFrames(0),
@@ -3705,7 +3707,7 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
         }
 
 #ifdef OMAP_ENHANCEMENT
-    }
+	}
 #endif
 
         int64_t lastBufferTimeUs;
