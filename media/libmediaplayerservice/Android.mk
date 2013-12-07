@@ -76,6 +76,7 @@ ifeq ($(TARGET_ENABLE_QC_AV_ENHANCEMENTS),true)
             $(TOP)/hardware/qcom/media/mm-core/inc
     endif
 endif #TARGET_ENABLE_QC_AV_ENHANCEMENTS
+
 include $(BUILD_SHARED_LIBRARY)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
