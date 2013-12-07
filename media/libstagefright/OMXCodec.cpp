@@ -53,14 +53,14 @@
 #endif
 #include "include/avc_utils.h"
 
-#ifdef USE_SAMSUNG_COLORFORMAT
-#include <sec_format.h>
-#endif
-
 #ifdef ENABLE_AV_ENHANCEMENTS
 #include <QCMediaDefs.h>
 #include <QCMetaData.h>
 #include <QOMX_AudioExtensions.h>
+#endif
+
+#ifdef USE_SAMSUNG_COLORFORMAT
+#include <sec_format.h>
 #endif
 
 #ifdef USE_TI_CUSTOM_DOMX
@@ -1712,8 +1712,7 @@ OMXCodec::OMXCodec(
       mLeftOverBuffer(NULL),
       mPaused(false),
       mNativeWindow(
-              (!strncmp(componentName, "OMX.google.", 11)
-              || !strcmp(componentName, "OMX.Nvidia.mpeg2v.decode"))
+              (!strncmp(componentName, "OMX.google.", 11))
 #ifdef QCOM_HARDWARE
                         ? NULL : nativeWindow),
       mNumBFrames(0),
