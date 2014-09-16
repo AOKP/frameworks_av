@@ -64,7 +64,9 @@ struct MediaSource : public virtual RefBase {
     virtual status_t read(
             MediaBuffer **buffer, const ReadOptions *options = NULL) = 0;
 
+#ifdef QCOM_HARDWARE
     virtual void notifyError(status_t err) {}
+#endif
 
 #ifdef SEMC_ICS_CAMERA_BLOB
     virtual status_t getRecordingBuffer(unsigned int index, sp<MemoryBase>** buffer);
@@ -126,6 +128,11 @@ protected:
 private:
     MediaSource(const MediaSource &);
     MediaSource &operator=(const MediaSource &);
+
+#ifndef QCOM_HARDWARE
+public:
+    virtual void notifyError(status_t err) {}
+#endif
 };
 
 }  // namespace android
