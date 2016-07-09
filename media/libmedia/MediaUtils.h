@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2016 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-#include <unistd.h>
+#ifndef _MEDIA_UTILS_H
+#define _MEDIA_UTILS_H
 
 namespace android {
 
-extern pid_t getpid_cached;
+/**
+   Limit the amount of memory a process can allocate using setrlimit(RLIMIT_AS).
+   The value to use will be read from the specified system property, or if the
+   property doesn't exist it will use the specified number of bytes or the
+   specified percentage of total memory, whichever is smaller.
+*/
+void limitProcessMemory(
+    const char *property,
+    size_t numberOfBytes,
+    size_t percentageOfTotalMem);
 
-bool recordingAllowed(const String16& opPackageName);
-bool accessFmRadioAllowed();
-bool captureAudioOutputAllowed();
-bool captureHotwordAllowed();
-bool settingsAllowed();
-bool modifyAudioRoutingAllowed();
-bool dumpAllowed();
-}
+}   // namespace android
+
+#endif  // _MEDIA_UTILS_H
