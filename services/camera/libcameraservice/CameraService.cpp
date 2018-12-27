@@ -2042,30 +2042,37 @@ sp<MediaPlayer> CameraService::newMediaPlayer(const char *file) {
     return mp;
 }
 
-void CameraService::loadSound() {
+void CameraService::increaseSoundRef() {
+    Mutex::Autolock lock(mSoundLock);
+    mSoundRef++;
+}
+
+void CameraService::loadSoundLocked(sound_kind kind) {
     ATRACE_CALL();
 
-    Mutex::Autolock lock(mSoundLock);
-    LOG1("CameraService::loadSound ref=%d", mSoundRef);
-    if (mSoundRef++) return;
-
-    char value[PROPERTY_VALUE_MAX];
-    property_get("persist.sys.camera-sound", value, "1");
-
-    if (atoi(value)) {
-        mSoundPlayer[SOUND_SHUTTER] = newMediaPlayer("/system/media/audio/ui/camera_click.ogg");
-        mSoundPlayer[SOUND_RECORDING_START] = newMediaPlayer("/system/media/audio/ui/VideoRecord.ogg");
-        mSoundPlayer[SOUND_RECORDING_STOP] = newMediaPlayer("/system/media/audio/ui/VideoStop.ogg");
-    } else {
-        mSoundPlayer[SOUND_SHUTTER] = NULL;
-        mSoundPlayer[SOUND_RECORDING_START] = NULL;
-        mSoundPlayer[SOUND_RECORDING_STOP] = NULL;
+    LOG1("CameraService::loadSoundLocked ref=%d", mSoundRef);
+    if (SOUND_SHUTTER == kind && mSoundPlayer[SOUND_SHUTTER] == NULL) {
+        mSoundPlayer[SOUND_SHUTTER] = newMediaPlayer("/product/media/audio/ui/camera_click.ogg");
+        if (mSoundPlayer[SOUND_SHUTTER] == nullptr) {
+            mSoundPlayer[SOUND_SHUTTER] = newMediaPlayer("/system/media/audio/ui/camera_click.ogg");
+        }
+    } else if (SOUND_RECORDING_START == kind && mSoundPlayer[SOUND_RECORDING_START] ==  NULL) {
+        mSoundPlayer[SOUND_RECORDING_START] = newMediaPlayer("/product/media/audio/ui/VideoRecord.ogg");
+        if (mSoundPlayer[SOUND_RECORDING_START] == nullptr) {
+            mSoundPlayer[SOUND_RECORDING_START] =
+                newMediaPlayer("/system/media/audio/ui/VideoRecord.ogg");
+        }
+    } else if (SOUND_RECORDING_STOP == kind && mSoundPlayer[SOUND_RECORDING_STOP] == NULL) {
+        mSoundPlayer[SOUND_RECORDING_STOP] = newMediaPlayer("/product/media/audio/ui/VideoStop.ogg");
+        if (mSoundPlayer[SOUND_RECORDING_STOP] == nullptr) {
+            mSoundPlayer[SOUND_RECORDING_STOP] = newMediaPlayer("/system/media/audio/ui/VideoStop.ogg");
+        }
     }
 }
 
-void CameraService::releaseSound() {
+void CameraService::decreaseSoundRef() {
     Mutex::Autolock lock(mSoundLock);
-    LOG1("CameraService::releaseSound ref=%d", mSoundRef);
+    LOG1("CameraService::decreaseSoundRef ref=%d", mSoundRef);
     if (--mSoundRef) return;
 
     for (int i = 0; i < NUM_SOUNDS; i++) {
@@ -2081,6 +2088,7 @@ void CameraService::playSound(sound_kind kind) {
 
     LOG1("playSound(%d)", kind);
     Mutex::Autolock lock(mSoundLock);
+    loadSoundLocked(kind);
     sp<MediaPlayer> player = mSoundPlayer[kind];
     if (player != 0) {
         player->seekTo(0);
@@ -2110,7 +2118,7 @@ CameraService::Client::Client(const sp<CameraService>& cameraService,
 
     mRemoteCallback = cameraClient;
 
-    cameraService->loadSound();
+    cameraService->increaseSoundRef();
 
     LOG1("Client::Client X (pid %d, id %d)", callingPid, mCameraId);
 }
@@ -2120,7 +2128,7 @@ CameraService::Client::~Client() {
     ALOGV("~Client");
     mDestructionStarted = true;
 
-    sCameraService->releaseSound();
+    sCameraService->decreaseSoundRef();
     // unconditionally disconnect. function is idempotent
     Client::disconnect();
 }
